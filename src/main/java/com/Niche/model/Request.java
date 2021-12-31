@@ -10,8 +10,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "request_tbl")
 public class Request implements Serializable {
-
-	
 	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id; 

@@ -30,6 +30,7 @@ import io.jsonwebtoken.lang.Objects;
 
 @RestController
 @CrossOrigin("*")
+@RequestMapping("/api")
 public class AuthenticateController {
 
 	@Autowired

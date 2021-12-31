@@ -9,25 +9,22 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "requests")
-public class Employee {
+public class ServiceRequest {
 
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private String firstName;
-	private String lastName;
 	private String emailId;
-	private String request;
 	private String subject;
-	private boolean status;
+	private String request;
 
-	public Employee() {}
+
+	public ServiceRequest() {}
 	
-	public Employee(String firstName, String lastName, String emailId, String request) {
-		this.firstName = firstName;
-		this.lastName = lastName;
+	public ServiceRequest(String emailId, String subject, String request) {
 		this.emailId = emailId;
+		this.subject = subject;
 		this.request = request;
 	}
 	
@@ -36,22 +33,6 @@ public class Employee {
 	}
 	public void setId(long id) {
 		this.id = id;
-	}
-	
-	@Column(name = "First Name", nullable = false)
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	
-	@Column(name = "Last Name", nullable = false)
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
 	}
 	
 	@Column(name = "Email", nullable = false)
@@ -80,7 +61,7 @@ public class Employee {
 	
 	@Override
 	public String toString() {
-		return "User ID: " + id + "\n First Name: " + firstName + "\n Last Name: " + lastName + "\n Email: " + emailId;
+		return "User ID: " + id + "\n Email: " + emailId;
 	}
 	
 }
