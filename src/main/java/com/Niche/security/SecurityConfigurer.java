@@ -3,7 +3,6 @@ package com.Niche.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,58 +11,47 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.Niche.service.UserDetailsServiceImpl;
+import com.Niche.filter.JwtRequestFilter;
+import com.Niche.util.NicheUserDetailsService;
 
 @EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class MySecurityConfig extends WebSecurityConfigurerAdapter{
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	private NicheUserDetailsService nicheUserDetailsService;
 	
 	@Autowired
-	private JwtAuthenticationEntryPoint unautherizedHandler;
-	
-	@Autowired
-	private JwtAuthenticationFilter jwtAuthenticationFilter;
-	
-	@Autowired
-	private UserDetailsServiceImpl userDetailsServiceImpl;
-	
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
-	
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		// TODO Auto-generated method stub
-		return super.authenticationManagerBean();
-	}
-	
+	private JwtRequestFilter jwtRequestFilter;
+    
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// TODO Auto-generated method stub
-		auth.userDetailsService(this.userDetailsServiceImpl).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(nicheUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		// TODO Auto-generated method stub
-		http
-			.csrf().disable()
-			.cors().disable()
+		http.csrf().disable()
 			.authorizeRequests()
-			//,"/register"
-			.antMatchers("/api/generate-token","/api/register","/api/authenticate").permitAll()
+			.antMatchers("/api/authenticate", "/api/register").permitAll()
 			.anyRequest().authenticated()
-			.and()
-			.exceptionHandling().authenticationEntryPoint(unautherizedHandler)
-			.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			.and().sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+	}
 	
-		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+	@Override
+	@Bean
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+	
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }

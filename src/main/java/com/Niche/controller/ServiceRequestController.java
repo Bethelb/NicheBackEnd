@@ -1,5 +1,6 @@
 package com.Niche.controller;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,8 @@ public class ServiceRequestController {
 	private ServiceRequestRepository serviceRequestRepository;
 
 	@GetMapping("/service-requests")
-	public List<ServiceRequest> getAllServiceRequests() {
-		return serviceRequestRepository.findAll();
+	public List<ServiceRequest> getAllServiceRequests(Principal principal) {
+		return serviceRequestRepository.findByUsername(principal.getName());
 	}
 
 	@GetMapping("/service-requests/{id}")
@@ -41,7 +42,8 @@ public class ServiceRequestController {
 	}
 
 	@PostMapping("/service-requests")
-	public ServiceRequest createServiceRequest(@Valid @RequestBody ServiceRequest serviceRequest) {
+	public ServiceRequest createServiceRequest(@Valid @RequestBody ServiceRequest serviceRequest, Principal principal) {
+		serviceRequest.setUsername(principal.getName());
 		return serviceRequestRepository.save(serviceRequest);
 	}
 
