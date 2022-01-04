@@ -39,6 +39,7 @@ public class ServiceRequest {
 	public String getEmailId() {
 		return emailId;
 	}
+	
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
@@ -47,6 +48,7 @@ public class ServiceRequest {
 	public String getSubject() {
 		return subject;
 	}
+	
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
@@ -55,6 +57,7 @@ public class ServiceRequest {
 	public String getRequest() {
 		return request;
 	}
+	
 	public void setRequest(String request) {
 		this.request = request;
 	}

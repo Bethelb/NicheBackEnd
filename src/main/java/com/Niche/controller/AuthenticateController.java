@@ -1,6 +1,9 @@
  package com.Niche.controller;
 
-import java.security.Principal; 
+import java.security.Principal;
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Niche.exception.UserNotFoundException;
+//import com.Niche.model.Employee;
 import com.Niche.model.JwtRequest;
 import com.Niche.model.JwtResponse;
 import com.Niche.model.User;
+//import com.Niche.repository.EmployeeRepository;
 import com.Niche.security.JwtUtils;
 import com.Niche.service.UserDetailsServiceImpl;
 import com.Niche.service.UserServiceImpl;
@@ -29,7 +34,7 @@ import com.Niche.service.UserServiceImpl;
 import io.jsonwebtoken.lang.Objects;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 public class AuthenticateController {
 
@@ -45,7 +50,9 @@ public class AuthenticateController {
 	@Autowired
 	private UserServiceImpl userService;
 	
-	
+//	@Autowired
+//	private EmployeeRepository employeeRepository;
+//	
 
 	//generate token
 	@PostMapping("/generate-token")
@@ -64,10 +71,9 @@ public class AuthenticateController {
 		UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(jwtRequest.getUsername());
 		String token= this.jwtUtils.generateToken(userDetails);
 		return ResponseEntity.ok(new JwtResponse(token));
-		
 	}
 	
-	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+	@PostMapping("/authenticate")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 		final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUsername());
@@ -76,14 +82,28 @@ public class AuthenticateController {
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
 
-	
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@PostMapping("/register")
 	public ResponseEntity<?> saveUser(@RequestBody User user) throws Exception {
-		return ResponseEntity.ok(userService.saveUser(user));
+		User userDb = userService.getUser(user.getUsername());
+		if (userDb == null) {
+			return ResponseEntity.ok(userService.saveUser(user));
+		} else {
+			return ResponseEntity.ok("User already exists!");
+		}
 	}
+//
+//	@PostMapping("/userrequests/add")
+//	public Employee createEmployee(@Valid @RequestBody Employee employee) {
+//		return employeeRepository.save(employee);
+//	}
+//
+//	@GetMapping("/userrequests")
+//	public List<Employee> getAllEmployees() {
+//		return employeeRepository.findAll();
+//	}
+//
 
-	
-	
+
 	private void authenticate(String username, String password) throws Exception {
 //		Objects.requireNonNull(username);
 //		Objects.requireNonNull(password);
@@ -102,7 +122,7 @@ public class AuthenticateController {
 	
 	//return the details of current user
 	@GetMapping(value = "/{username}")
-	public User getCurrentUser(@PathVariable Principal username) {
-		return ((User)this.userDetailsServiceImpl.loadUserByUsername(username.getName()));
+	public User getCurrentUser(Principal principal) {
+		return ((User)this.userDetailsServiceImpl.loadUserByUsername(principal.getName()));
 	}
 }

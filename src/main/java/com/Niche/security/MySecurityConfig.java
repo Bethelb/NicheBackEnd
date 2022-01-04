@@ -16,8 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.Niche.service.UserDetailsServiceImpl;
 
-
-
 @EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -59,8 +57,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter{
 			.cors().disable()
 			.authorizeRequests()
 			//,"/register"
-			.antMatchers("/generate-token","/**").permitAll()
-			.antMatchers(HttpMethod.OPTIONS).permitAll()
+			.antMatchers("/api/generate-token","/api/register","/api/authenticate").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(unautherizedHandler)
