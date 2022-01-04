@@ -30,7 +30,7 @@ public class ServiceRequestController {
 
 	@GetMapping("/service-requests")
 	public List<ServiceRequest> getAllServiceRequests(Principal principal) {
-		return serviceRequestRepository.findByUsername(principal.getName());
+		return serviceRequestRepository.searchByUsername(principal.getName());
 	}
 
 	@GetMapping("/service-requests/{id}")

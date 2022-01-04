@@ -36,13 +36,13 @@ public class AuthController {
 	private PasswordEncoder passwordEncoder;
 	
 	@PostMapping("/authenticate")
-	public  ResponseEntity<?> getAuthenticationToken(@Valid @RequestBody LoginData authData) throws Exception {
+	public  ResponseEntity<?> getAuthenticationToken(@Valid @RequestBody LoginData loginData) throws Exception {
 		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authData.getUsername(), authData.getPassword()));
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginData.getUsername(), loginData.getPassword()));
 		} catch (BadCredentialsException e) {
 			throw new Exception("Wrong username or password", e);
 		}
-		UserDetails userDetails = nicheUserDetailsService.loadUserByUsername(authData.getUsername());
+		UserDetails userDetails = nicheUserDetailsService.loadUserByUsername(loginData.getUsername());
 		String jwt = jwtUtil.generateToken(userDetails);
 		return ResponseEntity.ok(new ResponseToken(jwt));
 	}

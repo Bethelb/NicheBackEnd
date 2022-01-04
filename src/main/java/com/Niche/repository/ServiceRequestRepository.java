@@ -11,5 +11,5 @@ import com.Niche.model.ServiceRequest;
 @Repository
 public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, Long>{
 	@Query("SELECT r FROM ServiceRequest r WHERE r.username LIKE %?1%")
-	public List<ServiceRequest> findByUsername(String keyword);
+	public List<ServiceRequest> searchByUsername(String username);
 }
